@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/welcomeFragment">
+
+    <fragment
+        android:id="@+id/welcomeFragment"
+        android:name="com.example.micelios.presentation.auth.WelcomeFragment"
+        android:label="Boas-vindas" />
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.micelios.presentation.home.HomeFragment"
+        android:label="Início" />
+
+    <fragment
+        android:id="@+id/hyphaListFragment"
+        android:name="com.example.micelios.presentation.hypha.HyphaListFragment"
+        android:label="Hyphas" />
+
+    <fragment
+        android:id="@+id/createMomentFragment"
+        android:name="com.example.micelios.presentation.moments.MomentListFragment"
+        android:label="Novo Momento" />
+
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.example.micelios.presentation.chat.ChatFragment"
+        android:label="Chat da Hypha">
+        <argument
+            android:name="hyphaId"
+            app:argType="long" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.micelios.presentation.profile.ProfileFragment"
+        android:label="Perfil" />
+</navigation>

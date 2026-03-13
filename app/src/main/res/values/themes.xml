@@ -1,0 +1,17 @@
+<resources>
+
+    <!-- Base theme used by the application -->
+    <style name="Theme.Micelios" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+        <!-- Primary color used by the application -->
+        <item name="colorPrimary">#4CAF50</item>
+
+        <!-- Darker primary color -->
+        <item name="colorPrimaryVariant">#388E3C</item>
+
+        <!-- Secondary color used for accents -->
+        <item name="colorSecondary">#8BC34A</item>
+
+    </style>
+
+</resources>
