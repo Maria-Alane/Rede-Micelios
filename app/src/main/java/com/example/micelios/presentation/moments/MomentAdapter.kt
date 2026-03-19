@@ -6,9 +6,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.micelios.databinding.ItemMomentoBinding
 import com.example.micelios.domain.model.Moment
 
-class HomeAdapter(
+class MomentAdapter(
     private val momentos: List<Moment>
-) : RecyclerView.Adapter<HomeAdapter.MomentoViewHolder>() {
+) : RecyclerView.Adapter<MomentAdapter.MomentoViewHolder>() {
 
     inner class MomentoViewHolder(val binding: ItemMomentoBinding) :
         RecyclerView.ViewHolder(binding.root) {

@@ -7,10 +7,12 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.example.micelios.data.local.database.MiceliosDatabase
 import com.example.micelios.data.repository.MessageRepository
 import com.example.micelios.data.repository.UserRepository
 import com.example.micelios.databinding.FragmentChatBinding
+import com.example.micelios.presentation.common.SessionManager
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -21,14 +23,12 @@ class ChatFragment : Fragment() {
 
     private lateinit var viewModel: ChatViewModel
 
-    private var hyphaId: Long = 1L
+    private var hyphaId: Long = -1L
     private var userName: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            hyphaId = it.getLong("hyphaId", 1L)
-        }
+        hyphaId = arguments?.getLong("hyphaId", -1L) ?: -1L
     }
 
     override fun onCreateView(
@@ -43,19 +43,33 @@ class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val database = MiceliosDatabase.getDatabase(requireContext())
-        val repository = MessageRepository(database.messageDao())
-        val userRepository = UserRepository(database.userDao())
-        viewModel = ChatViewModel(repository)
+        if (hyphaId == -1L) {
+            Toast.makeText(requireContext(), "Hypha inválida para o chat", Toast.LENGTH_SHORT).show()
+            findNavController().popBackStack()
+            return
+        }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            userRepository.getUser().collectLatest { user ->
-                userName = user?.name
+        val database = MiceliosDatabase.getDatabase(requireContext())
+        val messageRepository = MessageRepository(database.messageDao())
+        val userRepository = UserRepository(database.userDao())
+        val sessionManager = SessionManager(requireContext().applicationContext)
+
+        viewModel = ChatViewModel(messageRepository)
+
+        val currentUserId = sessionManager.getCurrentUserId()
+
+        if (currentUserId == null) {
+            Toast.makeText(requireContext(), "Faça login para enviar mensagens", Toast.LENGTH_SHORT).show()
+        } else {
+            viewLifecycleOwner.lifecycleScope.launch {
+                userRepository.getUserById(currentUserId).collectLatest { user ->
+                    userName = user?.name
+                }
             }
         }
 
         binding.buttonSendMessage.setOnClickListener {
-            val text = binding.editTextMessage.text.toString()
+            val text = binding.editTextMessage.text.toString().trim()
 
             if (text.isBlank()) {
                 Toast.makeText(requireContext(), "Digite uma mensagem", Toast.LENGTH_SHORT).show()
@@ -63,7 +77,7 @@ class ChatFragment : Fragment() {
             }
 
             if (userName.isNullOrBlank()) {
-                Toast.makeText(requireContext(), "Salve seu perfil primeiro", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Não foi possível identificar o usuário atual", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -73,7 +87,9 @@ class ChatFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.messages.collectLatest { messages ->
-                val messageText = messages.joinToString("\n") { "${it.senderName}: ${it.content}" }
+                val messageText = messages.joinToString("\n") {
+                    "${it.senderName}: ${it.content}"
+                }
                 binding.textViewMessageList.text = messageText
             }
         }

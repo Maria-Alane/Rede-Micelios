@@ -11,8 +11,14 @@ import kotlinx.coroutines.flow.Flow
 interface UserDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(user: UserEntity)
+    suspend fun insert(user: UserEntity): Long
 
-    @Query("SELECT * FROM user_table LIMIT 1")
-    fun getUser(): Flow<UserEntity?>
+    @Query("SELECT * FROM user_table WHERE id = :userId LIMIT 1")
+    fun getUserById(userId: Long): Flow<UserEntity?>
+
+    @Query("SELECT * FROM user_table WHERE id = :userId LIMIT 1")
+    suspend fun getUserByIdOnce(userId: Long): UserEntity?
+
+    @Query("SELECT EXISTS(SELECT 1 FROM user_table WHERE id = :userId)")
+    suspend fun existsById(userId: Long): Boolean
 }

@@ -10,6 +10,7 @@ import com.example.micelios.data.local.dao.MomentDao
 import com.example.micelios.data.local.dao.ReactionDao
 import com.example.micelios.data.local.dao.UserDao
 import com.example.micelios.data.local.entity.HyphaEntity
+import com.example.micelios.data.local.entity.HyphaMemberEntity
 import com.example.micelios.data.local.entity.MessageEntity
 import com.example.micelios.data.local.entity.MomentEntity
 import com.example.micelios.data.local.entity.ReactionEntity
@@ -21,9 +22,10 @@ import com.example.micelios.data.local.entity.UserEntity
         HyphaEntity::class,
         MomentEntity::class,
         MessageEntity::class,
-        ReactionEntity::class
+        ReactionEntity::class,
+        HyphaMemberEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class MiceliosDatabase : RoomDatabase() {

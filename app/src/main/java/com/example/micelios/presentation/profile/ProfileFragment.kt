@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.micelios.data.local.database.MiceliosDatabase
 import com.example.micelios.data.repository.UserRepository
 import com.example.micelios.databinding.FragmentProfileBinding
+import com.example.micelios.presentation.common.SessionManager
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -22,9 +23,10 @@ class ProfileFragment : Fragment() {
 
     private val viewModel: ProfileViewModel by viewModels {
         ProfileViewModelFactory(
-            UserRepository(
+            userRepository = UserRepository(
                 MiceliosDatabase.getDatabase(requireContext()).userDao()
-            )
+            ),
+            sessionManager = SessionManager(requireContext().applicationContext)
         )
     }
 
@@ -62,12 +64,14 @@ class ProfileFragment : Fragment() {
 }
 
 class ProfileViewModelFactory(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val sessionManager: SessionManager
 ) : ViewModelProvider.Factory {
+
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ProfileViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return ProfileViewModel(userRepository) as T
+            return ProfileViewModel(userRepository, sessionManager) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

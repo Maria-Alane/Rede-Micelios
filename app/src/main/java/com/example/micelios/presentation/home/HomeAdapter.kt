@@ -4,14 +4,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.micelios.databinding.ItemMomentoBinding
-import com.example.micelios.domain.model.Moment
+import com.example.micelios.domain.model.FeedMoment
 import com.example.micelios.presentation.common.TimeFormatter
 
 class HomeAdapter : RecyclerView.Adapter<HomeAdapter.MomentoViewHolder>() {
 
-    private val items = mutableListOf<Moment>()
+    private val items = mutableListOf<FeedMoment>()
 
-    fun submitList(newItems: List<Moment>) {
+    fun submitList(newItems: List<FeedMoment>) {
         items.clear()
         items.addAll(newItems)
         notifyDataSetChanged()
@@ -21,11 +21,11 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.MomentoViewHolder>() {
         private val binding: ItemMomentoBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(moment: Moment) {
+        fun bind(moment: FeedMoment) {
             binding.textViewAvatar.text = moment.creatorName.take(2).uppercase()
             binding.textViewAuthor.text = moment.creatorName
             binding.textViewCircleTime.text =
-                "Hypha ${moment.hyphaId} • ${TimeFormatter.formatElapsedTime(moment.timestamp)}"
+                "${moment.hyphaName} • ${TimeFormatter.formatElapsedTime(moment.timestamp)}"
             binding.textViewContent.text = moment.content
         }
     }

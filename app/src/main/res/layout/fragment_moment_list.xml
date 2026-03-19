@@ -6,36 +6,43 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
-    <EditText
-        android:id="@+id/editTextMoment"
-        android:hint="Digite um momento"
+    <com.google.android.material.textfield.MaterialAutoCompleteTextView
+        android:id="@+id/autoCompleteHypha"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:hint="Escolha a hypha"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/buttonPostMoment"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_chainStyle="packed"/>
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <EditText
+        android:id="@+id/editTextMoment"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="Digite um momento"
+        app:layout_constraintTop_toBottomOf="@id/autoCompleteHypha"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/buttonPostMoment"
-        android:text="Postar Momento"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Postar Momento"
         app:layout_constraintTop_toBottomOf="@id/editTextMoment"
-        app:layout_constraintBottom_toTopOf="@id/textViewMomentList"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
         android:id="@+id/textViewMomentList"
-        android:text="Lista de Momentos"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingTop="16dp"
+        android:layout_marginTop="16dp"
+        android:text="Escolha a hypha e publique seu momento."
         app:layout_constraintTop_toBottomOf="@id/buttonPostMoment"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

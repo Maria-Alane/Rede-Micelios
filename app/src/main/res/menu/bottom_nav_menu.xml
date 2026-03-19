@@ -12,9 +12,9 @@
         android:title="Hyphas" />
 
     <item
-        android:id="@+id/createMomentFragment"
+        android:id="@+id/momentListFragment"
         android:icon="@android:drawable/ic_input_add"
-        android:title="Momento" />
+        android:title="Postar" />
 
     <item
         android:id="@+id/profileFragment"
