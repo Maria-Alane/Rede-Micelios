@@ -6,7 +6,6 @@ import com.example.micelios.data.local.entity.MomentEntity
 import com.example.micelios.domain.model.FeedMoment
 import com.example.micelios.domain.model.Moment
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 
 class MomentRepository(
@@ -20,7 +19,8 @@ class MomentRepository(
                 Moment(
                     id = it.id,
                     hyphaId = it.hyphaId,
-                    creatorName = it.creatorName,
+                    creatorUserId = it.creatorUserId,
+                    creatorDisplayName = it.creatorDisplayName,
                     content = it.content,
                     photoUri = it.photoUri,
                     timestamp = it.timestamp
@@ -32,38 +32,35 @@ class MomentRepository(
     fun getFeedMomentsForUser(userId: Long): Flow<List<FeedMoment>> {
         val last24h = System.currentTimeMillis() - 24 * 60 * 60 * 1000
 
-        return combine(
-            momentDao.getFeedMoments(last24h),
-            hyphaDao.getHyphasForUser(userId)
-        ) { moments, hyphas ->
-            val hyphaMap = hyphas.associateBy { it.id }
-
-            moments
-                .filter { hyphaMap.containsKey(it.hyphaId) }
-                .map { moment ->
-                    FeedMoment(
-                        id = moment.id,
-                        hyphaId = moment.hyphaId,
-                        hyphaName = hyphaMap[moment.hyphaId]?.name ?: "Hypha",
-                        creatorName = moment.creatorName,
-                        content = moment.content,
-                        photoUri = moment.photoUri,
-                        timestamp = moment.timestamp
-                    )
-                }
+        return momentDao.getFeedMomentsForUser(
+            currentUserId = userId,
+            fromTimestamp = last24h
+        ).map { list ->
+            list.map {
+                FeedMoment(
+                    id = it.id,
+                    hyphaId = it.hyphaId,
+                    hyphaName = it.hyphaName,
+                    creatorUserId = it.creatorUserId,
+                    creatorDisplayName = it.creatorDisplayName,
+                    content = it.content,
+                    photoUri = it.photoUri,
+                    timestamp = it.timestamp
+                )
+            }
         }
     }
 
     suspend fun insertMoment(
         hyphaId: Long,
-        creatorName: String,
+        creatorUserId: Long,
         content: String,
         photoUri: String? = null
     ) {
         momentDao.insert(
             MomentEntity(
                 hyphaId = hyphaId,
-                creatorName = creatorName,
+                creatorUserId = creatorUserId,
                 content = content,
                 photoUri = photoUri
             )

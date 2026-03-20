@@ -11,7 +11,6 @@ import androidx.lifecycle.lifecycleScope
 import com.example.micelios.data.local.database.MiceliosDatabase
 import com.example.micelios.data.repository.HyphaRepository
 import com.example.micelios.data.repository.MomentRepository
-import com.example.micelios.data.repository.UserRepository
 import com.example.micelios.databinding.FragmentMomentListBinding
 import com.example.micelios.presentation.common.SessionManager
 import kotlinx.coroutines.flow.collectLatest
@@ -45,13 +44,11 @@ class MomentListFragment : Fragment() {
             hyphaDao = database.hyphaDao()
         )
         val hyphaRepository = HyphaRepository(database.hyphaDao())
-        val userRepository = UserRepository(database.userDao())
         val sessionManager = SessionManager(requireContext().applicationContext)
 
         viewModel = MomentListViewModel(
             momentRepository = momentRepository,
             hyphaRepository = hyphaRepository,
-            userRepository = userRepository,
             sessionManager = sessionManager
         )
 

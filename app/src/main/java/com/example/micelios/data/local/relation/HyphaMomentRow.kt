@@ -1,12 +1,11 @@
-package com.example.micelios.domain.model
+package com.example.micelios.data.local.relation
 
-data class FeedMoment(
+data class HyphaMomentRow(
     val id: Long,
     val hyphaId: Long,
-    val hyphaName: String,
     val creatorUserId: Long,
     val creatorDisplayName: String,
     val content: String,
-    val photoUri: String? = null,
+    val photoUri: String?,
     val timestamp: Long
 )

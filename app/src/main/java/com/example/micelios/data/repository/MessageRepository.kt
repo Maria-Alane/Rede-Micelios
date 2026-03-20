@@ -6,7 +6,9 @@ import com.example.micelios.domain.model.Message
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class MessageRepository(private val messageDao: MessageDao) {
+class MessageRepository(
+    private val messageDao: MessageDao
+) {
 
     fun getMessagesByHypha(hyphaId: Long): Flow<List<Message>> {
         return messageDao.getMessagesByHypha(hyphaId).map { list ->
@@ -14,7 +16,8 @@ class MessageRepository(private val messageDao: MessageDao) {
                 Message(
                     id = it.id,
                     hyphaId = it.hyphaId,
-                    senderName = it.senderName,
+                    senderUserId = it.senderUserId,
+                    senderDisplayName = it.senderDisplayName,
                     content = it.content,
                     timestamp = it.timestamp
                 )
@@ -24,13 +27,13 @@ class MessageRepository(private val messageDao: MessageDao) {
 
     suspend fun insertMessage(
         hyphaId: Long,
-        senderName: String,
+        senderUserId: Long,
         content: String
     ) {
         messageDao.insert(
             MessageEntity(
                 hyphaId = hyphaId,
-                senderName = senderName,
+                senderUserId = senderUserId,
                 content = content
             )
         )

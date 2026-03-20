@@ -25,7 +25,7 @@ import com.example.micelios.data.local.entity.UserEntity
         ReactionEntity::class,
         HyphaMemberEntity::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 abstract class MiceliosDatabase : RoomDatabase() {

@@ -14,8 +14,8 @@ class MomentAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(moment: Moment) {
-            binding.textViewAvatar.text = moment.creatorName.take(2).uppercase()
-            binding.textViewAuthor.text = moment.creatorName
+            binding.textViewAvatar.text = moment.creatorDisplayName.take(2).uppercase()
+            binding.textViewAuthor.text = moment.creatorDisplayName
             binding.textViewCircleTime.text = "Hypha ${moment.hyphaId} • há minutos" // Pode formatar
             binding.textViewContent.text = moment.content
         }

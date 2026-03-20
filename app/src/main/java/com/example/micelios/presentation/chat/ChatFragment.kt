@@ -10,7 +10,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.micelios.data.local.database.MiceliosDatabase
 import com.example.micelios.data.repository.MessageRepository
-import com.example.micelios.data.repository.UserRepository
 import com.example.micelios.databinding.FragmentChatBinding
 import com.example.micelios.presentation.common.SessionManager
 import kotlinx.coroutines.flow.collectLatest
@@ -24,7 +23,6 @@ class ChatFragment : Fragment() {
     private lateinit var viewModel: ChatViewModel
 
     private var hyphaId: Long = -1L
-    private var userName: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,44 +49,32 @@ class ChatFragment : Fragment() {
 
         val database = MiceliosDatabase.getDatabase(requireContext())
         val messageRepository = MessageRepository(database.messageDao())
-        val userRepository = UserRepository(database.userDao())
         val sessionManager = SessionManager(requireContext().applicationContext)
+        val currentUserId = sessionManager.getCurrentUserId()
 
         viewModel = ChatViewModel(messageRepository)
 
-        val currentUserId = sessionManager.getCurrentUserId()
-
-        if (currentUserId == null) {
-            Toast.makeText(requireContext(), "Faça login para enviar mensagens", Toast.LENGTH_SHORT).show()
-        } else {
-            viewLifecycleOwner.lifecycleScope.launch {
-                userRepository.getUserById(currentUserId).collectLatest { user ->
-                    userName = user?.name
-                }
-            }
-        }
-
         binding.buttonSendMessage.setOnClickListener {
             val text = binding.editTextMessage.text.toString().trim()
+
+            if (currentUserId == null) {
+                Toast.makeText(requireContext(), "Sessão inválida", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
             if (text.isBlank()) {
                 Toast.makeText(requireContext(), "Digite uma mensagem", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            if (userName.isNullOrBlank()) {
-                Toast.makeText(requireContext(), "Não foi possível identificar o usuário atual", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            viewModel.sendMessage(hyphaId, userName!!, text)
+            viewModel.sendMessage(hyphaId, currentUserId, text)
             binding.editTextMessage.text?.clear()
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.messages.collectLatest { messages ->
                 val messageText = messages.joinToString("\n") {
-                    "${it.senderName}: ${it.content}"
+                    "${it.senderDisplayName}: ${it.content}"
                 }
                 binding.textViewMessageList.text = messageText
             }

@@ -23,13 +23,13 @@ class ChatViewModel(
         }
     }
 
-    fun sendMessage(hyphaId: Long, senderName: String, content: String) {
+    fun sendMessage(hyphaId: Long, senderUserId: Long, content: String) {
         if (content.isBlank()) return
 
         viewModelScope.launch {
             messageRepository.insertMessage(
                 hyphaId = hyphaId,
-                senderName = senderName,
+                senderUserId = senderUserId,
                 content = content
             )
         }

@@ -8,7 +8,7 @@ data class MomentEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val hyphaId: Long,
-    val creatorName: String,
+    val creatorUserId: Long,
     val content: String,
     val photoUri: String? = null,
     val timestamp: Long = System.currentTimeMillis()

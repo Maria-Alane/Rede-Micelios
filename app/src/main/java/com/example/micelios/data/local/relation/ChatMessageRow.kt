@@ -1,6 +1,6 @@
-package com.example.micelios.domain.model
+package com.example.micelios.data.local.relation
 
-data class Message(
+data class ChatMessageRow(
     val id: Long,
     val hyphaId: Long,
     val senderUserId: Long,

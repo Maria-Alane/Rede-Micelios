@@ -8,7 +8,7 @@ data class MessageEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val hyphaId: Long,
-    val senderName: String,
+    val senderUserId: Long,
     val content: String,
     val timestamp: Long = System.currentTimeMillis()
 )

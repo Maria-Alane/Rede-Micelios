@@ -93,7 +93,7 @@ class HyphaDetailFragment : Fragment() {
                         "Nenhum momento nesta hypha ainda."
                     } else {
                         moments.joinToString("\n\n") {
-                            "${it.creatorName}: ${it.content}"
+                            "${it.creatorDisplayName}: ${it.content}"
                         }
                     }
             }

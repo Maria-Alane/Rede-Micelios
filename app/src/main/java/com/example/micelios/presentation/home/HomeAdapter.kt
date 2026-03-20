@@ -22,8 +22,8 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.MomentoViewHolder>() {
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(moment: FeedMoment) {
-            binding.textViewAvatar.text = moment.creatorName.take(2).uppercase()
-            binding.textViewAuthor.text = moment.creatorName
+            binding.textViewAvatar.text = moment.creatorDisplayName.take(2).uppercase()
+            binding.textViewAuthor.text = moment.creatorDisplayName
             binding.textViewCircleTime.text =
                 "${moment.hyphaName} • ${TimeFormatter.formatElapsedTime(moment.timestamp)}"
             binding.textViewContent.text = moment.content
