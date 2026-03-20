@@ -59,6 +59,16 @@
                 android:text="Você entrou há 0 min"
                 android:textColor="#5F5A54"
                 android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/textViewEmptyState"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Ainda não há momentos recentes nas suas hyphas."
+                android:textColor="#5F5A54"
+                android:textSize="14sp"
+                android:visibility="gone" />
         </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
 

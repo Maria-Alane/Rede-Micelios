@@ -4,11 +4,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.micelios.databinding.ItemFeedEndBinding
 import com.example.micelios.databinding.ItemMomentoBinding
 import com.example.micelios.domain.model.FeedMoment
 import com.example.micelios.presentation.common.TimeFormatter
 
-class HomeAdapter : RecyclerView.Adapter<HomeAdapter.MomentoViewHolder>() {
+class HomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val items = mutableListOf<FeedMoment>()
 
@@ -16,6 +17,14 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.MomentoViewHolder>() {
         items.clear()
         items.addAll(newItems)
         notifyDataSetChanged()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return if (position < items.size) {
+            VIEW_TYPE_MOMENT
+        } else {
+            VIEW_TYPE_END
+        }
     }
 
     inner class MomentoViewHolder(
@@ -40,18 +49,47 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.MomentoViewHolder>() {
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MomentoViewHolder {
-        val binding = ItemMomentoBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
-        )
-        return MomentoViewHolder(binding)
+    inner class FeedEndViewHolder(
+        private val binding: ItemFeedEndBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+        fun bind() = Unit
     }
 
-    override fun onBindViewHolder(holder: MomentoViewHolder, position: Int) {
-        holder.bind(items[position])
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            VIEW_TYPE_MOMENT -> {
+                val binding = ItemMomentoBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+                MomentoViewHolder(binding)
+            }
+
+            else -> {
+                val binding = ItemFeedEndBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+                FeedEndViewHolder(binding)
+            }
+        }
     }
 
-    override fun getItemCount(): Int = items.size
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (holder) {
+            is MomentoViewHolder -> holder.bind(items[position])
+            is FeedEndViewHolder -> holder.bind()
+        }
+    }
+
+    override fun getItemCount(): Int {
+        return if (items.isEmpty()) 0 else items.size + 1
+    }
+
+    companion object {
+        private const val VIEW_TYPE_MOMENT = 1
+        private const val VIEW_TYPE_END = 2
+    }
 }

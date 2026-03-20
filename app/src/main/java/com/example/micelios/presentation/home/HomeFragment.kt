@@ -53,6 +53,8 @@ class HomeFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.moments.collect { moments ->
                 adapter.submitList(moments)
+                binding.textViewEmptyState.visibility =
+                    if (moments.isEmpty()) View.VISIBLE else View.GONE
             }
         }
 

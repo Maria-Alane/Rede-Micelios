@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="24dp"
+    android:gravity="center_horizontal">
+
+    <TextView
+        android:id="@+id/textViewFeedEndTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Você viu tudo o que foi compartilhado hoje."
+        android:textStyle="bold"
+        android:textSize="15sp"
+        android:textColor="#3D3630"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/textViewFeedEndSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="Agora vá viver um pouco lá fora 🍄"
+        android:textSize="13sp"
+        android:textColor="#5F5A54"
+        android:gravity="center" />
+
+</LinearLayout>
