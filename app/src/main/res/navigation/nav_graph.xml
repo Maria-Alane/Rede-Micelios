@@ -53,4 +53,9 @@
         android:id="@+id/chatFragment"
         android:name="com.example.micelios.presentation.chat.ChatFragment"
         android:label="Chat" />
+
+    <fragment
+        android:id="@+id/createHyphaFragment"
+        android:name="com.example.micelios.presentation.hypha.CreateHyphaFragment"
+        android:label="Criar Hypha" />
 </navigation>

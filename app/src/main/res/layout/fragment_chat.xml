@@ -1,34 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:background="#F6F0E8">
+    android:background="#F6F0E8"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:title="Chat"
+        app:navigationIcon="@android:drawable/ic_media_previous" />
 
     <TextView
-        android:id="@+id/textViewMessageList"
+        android:id="@+id/textViewEmptyChat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="12dp"
+        android:text="Nenhuma mensagem ainda."
+        android:textColor="#5F5A54"
+        android:visibility="gone" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerMessages"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="#FFFDF9"
-        android:padding="16dp"
-        android:text="Chat"
-        android:textColor="#2F2A24"
-        android:scrollbars="vertical" />
+        android:clipToPadding="false"
+        android:padding="16dp" />
 
-    <EditText
-        android:id="@+id/editTextMessage"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:hint="Digite sua mensagem" />
+        android:orientation="horizontal"
+        android:padding="12dp">
 
-    <Button
-        android:id="@+id/buttonSendMessage"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Enviar" />
+        <EditText
+            android:id="@+id/editTextMessage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Digite sua mensagem" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonSendMessage"
+            style="@style/Widget.Micelios.Button.Primary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Enviar" />
+    </LinearLayout>
 </LinearLayout>

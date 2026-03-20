@@ -57,6 +57,10 @@ class HyphaDetailFragment : Fragment() {
 
         viewModel = HyphaDetailViewModel(hyphaRepository, momentRepository)
 
+        binding.toolbar.setNavigationOnClickListener {
+            findNavController().popBackStack()
+        }
+
         binding.buttonOpenChat.setOnClickListener {
             val bundle = Bundle().apply {
                 putLong("hyphaId", hyphaId)

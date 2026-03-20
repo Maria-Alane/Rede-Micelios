@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.micelios.data.local.database.MiceliosDatabase
 import com.example.micelios.data.repository.MessageRepository
 import com.example.micelios.databinding.FragmentChatBinding
@@ -17,10 +18,11 @@ import kotlinx.coroutines.launch
 
 class ChatFragment : Fragment() {
 
-    private var fragmentChatBinding: FragmentChatBinding? = null
-    private val binding get() = fragmentChatBinding!!
+    private var _binding: FragmentChatBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var viewModel: ChatViewModel
+    private lateinit var chatAdapter: ChatAdapter
 
     private var hyphaId: Long = -1L
 
@@ -34,7 +36,7 @@ class ChatFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        fragmentChatBinding = FragmentChatBinding.inflate(inflater, container, false)
+        _binding = FragmentChatBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -42,7 +44,8 @@ class ChatFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         if (hyphaId == -1L) {
-            Toast.makeText(requireContext(), "Hypha inválida para o chat", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Hypha inválida para o chat", Toast.LENGTH_SHORT)
+                .show()
             findNavController().popBackStack()
             return
         }
@@ -53,6 +56,14 @@ class ChatFragment : Fragment() {
         val currentUserId = sessionManager.getCurrentUserId()
 
         viewModel = ChatViewModel(messageRepository)
+        chatAdapter = ChatAdapter(currentUserId)
+
+        binding.toolbar.setNavigationOnClickListener {
+            findNavController().popBackStack()
+        }
+
+        binding.recyclerMessages.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerMessages.adapter = chatAdapter
 
         binding.buttonSendMessage.setOnClickListener {
             val text = binding.editTextMessage.text.toString().trim()
@@ -73,14 +84,12 @@ class ChatFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.messages.collectLatest { messages ->
-                binding.textViewMessageList.text =
-                    if (messages.isEmpty()) {
-                        "Nenhuma mensagem ainda."
-                    } else {
-                        messages.joinToString("\n\n") {
-                            "${it.senderDisplayName}\n${it.content}"
-                        }
-                    }
+                chatAdapter.submitList(messages)
+                binding.textViewEmptyChat.visibility =
+                    if (messages.isEmpty()) View.VISIBLE else View.GONE
+                if (messages.isNotEmpty()) {
+                    binding.recyclerMessages.scrollToPosition(messages.lastIndex)
+                }
             }
         }
 
@@ -88,7 +97,7 @@ class ChatFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        fragmentChatBinding = null
         super.onDestroyView()
+        _binding = null
     }
 }

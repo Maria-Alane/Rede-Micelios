@@ -11,7 +11,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:title="Postar momento"
+        android:title="Nova Hypha"
         app:navigationIcon="@android:drawable/ic_media_previous" />
 
     <LinearLayout
@@ -20,42 +20,41 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <TextView
+        <EditText
+            android:id="@+id/editTextHyphaName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Escolha uma hypha"
-            android:textStyle="bold" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerHyphas"
-            android:layout_width="match_parent"
-            android:layout_height="160dp"
-            android:layout_marginTop="8dp" />
-
-        <TextView
-            android:id="@+id/textViewEmptyHyphas"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Você ainda não participa de nenhuma hypha."
-            android:textColor="#5F5A54"
-            android:visibility="gone" />
+            android:hint="Nome da Hypha" />
 
         <EditText
-            android:id="@+id/editTextMoment"
+            android:id="@+id/editTextHyphaDescription"
             android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:layout_marginTop="16dp"
-            android:gravity="top|start"
-            android:hint="Compartilhe um pequeno momento..."
-            android:padding="16dp" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="Descrição" />
+
+        <EditText
+            android:id="@+id/editTextMemberUserId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="ID do membro"
+            android:inputType="number" />
+
+        <EditText
+            android:id="@+id/editTextMemberDisplayName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="Nome do membro" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/buttonPostMoment"
+            android:id="@+id/buttonCreateHypha"
             style="@style/Widget.Micelios.Button.Primary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Publicar momento" />
+            android:text="Criar Hypha" />
+
     </LinearLayout>
 </LinearLayout>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="start"
+    android:layout_marginBottom="10dp"
+    android:paddingStart="16dp"
+    android:paddingEnd="48dp">
+
+    <TextView
+        android:id="@+id/textViewSender"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Mari"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:textColor="#5F5A54"
+        android:layout_marginBottom="4dp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:maxWidth="280dp"
+        android:background="@drawable/bg_message_received">
+
+        <TextView
+            android:id="@+id/textViewMessageContent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mensagem recebida"
+            android:textSize="14sp"
+            android:textColor="#2F2A26" />
+
+        <TextView
+            android:id="@+id/textViewMessageTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="há 2 min"
+            android:textSize="11sp"
+            android:textColor="#5F5A54" />
+    </LinearLayout>
+</LinearLayout>

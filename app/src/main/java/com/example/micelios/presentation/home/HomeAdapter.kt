@@ -36,7 +36,6 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.MomentoViewHolder>() {
             binding.textViewCircleTime.text =
                 "${moment.hyphaName} • ${TimeFormatter.formatElapsedTime(moment.timestamp)}"
             binding.textViewContent.text = moment.content
-
             binding.textViewAvatar.visibility = View.VISIBLE
         }
     }

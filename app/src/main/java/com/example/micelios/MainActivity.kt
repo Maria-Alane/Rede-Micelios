@@ -16,6 +16,13 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+    private val destinationsWithoutBottomNav = setOf(
+        R.id.welcomeFragment,
+        R.id.hyphaDetailFragment,
+        R.id.chatFragment,
+        R.id.createHyphaFragment
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -43,7 +50,11 @@ class MainActivity : AppCompatActivity() {
 
             navController.addOnDestinationChangedListener { _, destination, _ ->
                 binding.bottomNavigation.visibility =
-                    if (destination.id == R.id.welcomeFragment) View.GONE else View.VISIBLE
+                    if (destination.id in destinationsWithoutBottomNav) {
+                        View.GONE
+                    } else {
+                        View.VISIBLE
+                    }
             }
         }
     }

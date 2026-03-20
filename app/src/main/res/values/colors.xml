@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="micelios_background">#F6F1E8</color>
+    <color name="micelios_background">#F6F0E8</color>
     <color name="micelios_surface">#FFFDF9</color>
     <color name="micelios_header">#E9D7C3</color>
-    <color name="micelios_primary">#6A4E3B</color>
-    <color name="micelios_secondary">#7A8F63</color>
+    <color name="micelios_primary">#4CAF50</color>
+    <color name="micelios_secondary">#8BC34A</color>
     <color name="micelios_accent">#C97B63</color>
     <color name="micelios_text_primary">#2F241F</color>
-    <color name="micelios_text_secondary">#6C5A50</color>
+    <color name="micelios_text_secondary">#5F5A54</color>
+    <color name="micelios_button_primary">#2F4538</color>
+    <color name="micelios_message_sent">#8FBC8F</color>
+    <color name="micelios_message_received">#F8F6F2</color>
+    <color name="micelios_message_stroke">#DDD6CE</color>
+    <color name="micelios_primary_variant">#388E3C</color>
 </resources>
