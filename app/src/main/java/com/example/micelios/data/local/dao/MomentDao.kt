@@ -39,6 +39,7 @@ interface MomentDao {
             h.name AS hyphaName,
             m.creatorUserId AS creatorUserId,
             hm.displayName AS creatorDisplayName,
+            u.photoUri AS creatorPhotoUri,
             m.content AS content,
             m.photoUri AS photoUri,
             m.timestamp AS timestamp
@@ -50,6 +51,8 @@ interface MomentDao {
            AND hm.userId = m.creatorUserId
         INNER JOIN hypha_member_table viewer
             ON viewer.hyphaId = m.hyphaId
+        INNER JOIN user_table u
+            ON u.id = m.creatorUserId
         WHERE viewer.userId = :currentUserId
           AND m.timestamp >= :fromTimestamp
         ORDER BY m.timestamp DESC

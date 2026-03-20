@@ -6,6 +6,7 @@ data class FeedMomentRow(
     val hyphaName: String,
     val creatorUserId: Long,
     val creatorDisplayName: String,
+    val creatorPhotoUri: String?,
     val content: String,
     val photoUri: String?,
     val timestamp: Long

@@ -1,10 +1,16 @@
 package com.example.micelios.presentation.hypha
 
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
+import android.text.SpannableString
+import android.text.Spanned
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.text.buildSpannedString
+import androidx.core.text.inSpans
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -14,6 +20,7 @@ import com.example.micelios.data.repository.HyphaRepository
 import com.example.micelios.data.repository.MemberDraft
 import com.example.micelios.data.repository.UserRepository
 import com.example.micelios.databinding.FragmentHyphaListBinding
+import com.example.micelios.domain.model.Hypha
 import com.example.micelios.domain.model.HyphaType
 import com.example.micelios.presentation.common.SessionManager
 import kotlinx.coroutines.flow.collectLatest
@@ -91,35 +98,76 @@ class HyphaListFragment : Fragment() {
             Toast.makeText(requireContext(), "Hypha criada", Toast.LENGTH_SHORT).show()
         }
 
-        binding.buttonOpenHyphaById.setOnClickListener {
-            val hyphaIdText = binding.editTextOpenHyphaId.text.toString().trim()
-            val hyphaId = hyphaIdText.toLongOrNull()
-
-            if (hyphaId == null) {
-                Toast.makeText(requireContext(), "Digite um ID válido", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            val bundle = Bundle().apply {
-                putLong("hyphaId", hyphaId)
-            }
-            findNavController().navigate(R.id.action_hyphaListFragment_to_hyphaDetailFragment, bundle)
-        }
-
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.hyphas.collectLatest { hyphas ->
-                binding.textViewHyphaList.text =
-                    if (hyphas.isEmpty()) {
-                        "Nenhuma hypha criada ainda."
-                    } else {
-                        hyphas.joinToString("\n\n") { hypha ->
-                            "ID ${hypha.id}\n• ${hypha.name}\n${hypha.type}"
-                        }
-                    }
+                renderHyphaList(hyphas)
             }
         }
 
         viewModel.loadHyphas()
+    }
+
+    private fun renderHyphaList(hyphas: List<Hypha>) {
+        if (hyphas.isEmpty()) {
+            binding.textViewHyphaList.text = "Nenhuma hypha criada ainda."
+            return
+        }
+
+        val fullText = buildString {
+            hyphas.forEachIndexed { index, hypha ->
+                append(hypha.name)
+                append("\n")
+                append(hypha.type.name)
+                if (hypha.description.isNotBlank()) {
+                    append(" • ")
+                    append(hypha.description)
+                }
+                if (index != hyphas.lastIndex) {
+                    append("\n\n")
+                }
+            }
+        }
+
+        val spannable = SpannableString(fullText)
+        var start = 0
+
+        hyphas.forEach { hypha ->
+            val blockText = buildString {
+                append(hypha.name)
+                append("\n")
+                append(hypha.type.name)
+                if (hypha.description.isNotBlank()) {
+                    append(" • ")
+                    append(hypha.description)
+                }
+            }
+
+            val end = start + blockText.length
+
+            val clickableSpan = object : ClickableSpan() {
+                override fun onClick(widget: View) {
+                    val bundle = Bundle().apply {
+                        putLong("hyphaId", hypha.id)
+                    }
+                    findNavController().navigate(
+                        R.id.action_hyphaListFragment_to_hyphaDetailFragment,
+                        bundle
+                    )
+                }
+            }
+
+            spannable.setSpan(
+                clickableSpan,
+                start,
+                end,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+
+            start = end + 2
+        }
+
+        binding.textViewHyphaList.text = spannable
+        binding.textViewHyphaList.movementMethod = LinkMovementMethod.getInstance()
     }
 
     override fun onDestroyView() {

@@ -1,6 +1,7 @@
 package com.example.micelios.presentation.home
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.micelios.databinding.ItemMomentoBinding
@@ -22,11 +23,21 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.MomentoViewHolder>() {
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(moment: FeedMoment) {
-            binding.textViewAvatar.text = moment.creatorDisplayName.take(2).uppercase()
+            val initials = moment.creatorDisplayName
+                .trim()
+                .split(" ")
+                .take(2)
+                .mapNotNull { it.firstOrNull()?.toString() }
+                .joinToString("")
+                .uppercase()
+
+            binding.textViewAvatar.text = initials
             binding.textViewAuthor.text = moment.creatorDisplayName
             binding.textViewCircleTime.text =
                 "${moment.hyphaName} • ${TimeFormatter.formatElapsedTime(moment.timestamp)}"
             binding.textViewContent.text = moment.content
+
+            binding.textViewAvatar.visibility = View.VISIBLE
         }
     }
 

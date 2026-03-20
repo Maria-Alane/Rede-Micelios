@@ -43,6 +43,7 @@ class MomentRepository(
                     hyphaName = it.hyphaName,
                     creatorUserId = it.creatorUserId,
                     creatorDisplayName = it.creatorDisplayName,
+                    creatorPhotoUri = it.creatorPhotoUri,
                     content = it.content,
                     photoUri = it.photoUri,
                     timestamp = it.timestamp

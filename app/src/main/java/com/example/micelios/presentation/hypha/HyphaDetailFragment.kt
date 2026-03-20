@@ -71,6 +71,7 @@ class HyphaDetailFragment : Fragment() {
                     binding.textViewHyphaDescription.text =
                         if (hypha.description.isBlank()) "Sem descrição" else hypha.description
                     binding.textViewHyphaType.text = hypha.type.name
+                    binding.textViewHyphaBadge.text = hypha.name.take(2).uppercase()
                 }
             }
         }

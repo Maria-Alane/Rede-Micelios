@@ -6,6 +6,7 @@ data class FeedMoment(
     val hyphaName: String,
     val creatorUserId: Long,
     val creatorDisplayName: String,
+    val creatorPhotoUri: String? = null,
     val content: String,
     val photoUri: String? = null,
     val timestamp: Long

@@ -73,10 +73,14 @@ class ChatFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.messages.collectLatest { messages ->
-                val messageText = messages.joinToString("\n") {
-                    "${it.senderDisplayName}: ${it.content}"
-                }
-                binding.textViewMessageList.text = messageText
+                binding.textViewMessageList.text =
+                    if (messages.isEmpty()) {
+                        "Nenhuma mensagem ainda."
+                    } else {
+                        messages.joinToString("\n\n") {
+                            "${it.senderDisplayName}\n${it.content}"
+                        }
+                    }
             }
         }
 
