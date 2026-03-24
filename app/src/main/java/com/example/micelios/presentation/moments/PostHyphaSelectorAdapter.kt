@@ -7,11 +7,11 @@ import com.example.micelios.databinding.ItemHyphaOptionBinding
 import com.example.micelios.domain.model.Hypha
 
 class PostHyphaSelectorAdapter(
-    private val onSelected: (Long) -> Unit
+    private val onSelected: (String) -> Unit
 ) : RecyclerView.Adapter<PostHyphaSelectorAdapter.HyphaViewHolder>() {
 
     private val items = mutableListOf<Hypha>()
-    private var selectedHyphaId: Long? = null
+    private var selectedHyphaId: String? = null
 
     fun submitList(newItems: List<Hypha>) {
         items.clear()
@@ -49,12 +49,8 @@ class PostHyphaSelectorAdapter(
                 val previousIndex = items.indexOfFirst { it.id == previousSelectedId }
                 val currentIndex = bindingAdapterPosition
 
-                if (previousIndex != -1) {
-                    notifyItemChanged(previousIndex)
-                }
-                if (currentIndex != RecyclerView.NO_POSITION) {
-                    notifyItemChanged(currentIndex)
-                }
+                if (previousIndex != -1) notifyItemChanged(previousIndex)
+                if (currentIndex != RecyclerView.NO_POSITION) notifyItemChanged(currentIndex)
             }
         }
     }

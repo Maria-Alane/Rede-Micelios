@@ -1,60 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#F6F0E8">
-
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:title="Nova Hypha"
-        app:navigationIcon="@android:drawable/ic_media_previous" />
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="24dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:title="Criar Hypha"
+            app:navigationIcon="@android:drawable/ic_media_previous" />
 
         <EditText
             android:id="@+id/editTextHyphaName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Nome da Hypha" />
+            android:layout_marginTop="24dp"
+            android:hint="Nome da hypha"
+            android:inputType="textPersonName" />
 
         <EditText
             android:id="@+id/editTextHyphaDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:hint="Descrição" />
+            android:hint="Descrição"
+            android:inputType="textMultiLine" />
 
         <EditText
-            android:id="@+id/editTextMemberUserId"
+            android:id="@+id/editTextMemberEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:hint="ID do membro"
-            android:inputType="number" />
-
-        <EditText
-            android:id="@+id/editTextMemberDisplayName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:hint="Nome do membro" />
+            android:layout_marginTop="20dp"
+            android:hint="E-mail do membro"
+            android:inputType="textEmailAddress" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/buttonCreateHypha"
-            style="@style/Widget.Micelios.Button.Primary"
+            android:id="@+id/buttonSearchMemberByEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Buscar usuário por e-mail" />
+
+        <TextView
+            android:id="@+id/textViewSelectedMember"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Criar Hypha" />
+            android:text="Nenhum membro selecionado"
+            android:textSize="14sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonCreateHypha"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Criar hypha" />
 
     </LinearLayout>
-</LinearLayout>
+</androidx.core.widget.NestedScrollView>

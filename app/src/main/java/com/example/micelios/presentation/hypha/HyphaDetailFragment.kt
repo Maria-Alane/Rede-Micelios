@@ -6,28 +6,27 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.micelios.R
-import com.example.micelios.data.local.database.MiceliosDatabase
-import com.example.micelios.data.repository.HyphaRepository
-import com.example.micelios.data.repository.MomentRepository
 import com.example.micelios.databinding.FragmentHyphaDetailBinding
-import kotlinx.coroutines.flow.collectLatest
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class HyphaDetailFragment : Fragment() {
 
     private var _binding: FragmentHyphaDetailBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: HyphaDetailViewModel
+    private val viewModel: HyphaDetailViewModel by viewModels()
 
-    private var hyphaId: Long = -1L
+    private var hyphaId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        hyphaId = arguments?.getLong("hyphaId", -1L) ?: -1L
+        hyphaId = arguments?.getString("hyphaId")
     }
 
     override fun onCreateView(
@@ -42,34 +41,26 @@ class HyphaDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (hyphaId == -1L) {
+        val safeHyphaId = hyphaId
+        if (safeHyphaId.isNullOrBlank()) {
             Toast.makeText(requireContext(), "Hypha inválida", Toast.LENGTH_SHORT).show()
             findNavController().popBackStack()
             return
         }
-
-        val database = MiceliosDatabase.getDatabase(requireContext())
-        val hyphaRepository = HyphaRepository(database.hyphaDao())
-        val momentRepository = MomentRepository(
-            momentDao = database.momentDao(),
-            hyphaDao = database.hyphaDao()
-        )
-
-        viewModel = HyphaDetailViewModel(hyphaRepository, momentRepository)
 
         binding.toolbar.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
 
         binding.buttonOpenChat.setOnClickListener {
-            val bundle = Bundle().apply {
-                putLong("hyphaId", hyphaId)
-            }
-            findNavController().navigate(R.id.action_hyphaDetailFragment_to_chatFragment, bundle)
+            findNavController().navigate(
+                R.id.action_hyphaDetailFragment_to_chatFragment,
+                Bundle().apply { putString("hyphaId", safeHyphaId) }
+            )
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.hypha.collectLatest { hypha ->
+            viewModel.hypha.collect { hypha ->
                 if (hypha != null) {
                     binding.textViewHyphaName.text = hypha.name
                     binding.textViewHyphaDescription.text =
@@ -81,7 +72,7 @@ class HyphaDetailFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.members.collectLatest { members ->
+            viewModel.members.collect { members ->
                 binding.textViewMembers.text =
                     if (members.isEmpty()) {
                         "Nenhum membro"
@@ -92,7 +83,7 @@ class HyphaDetailFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.moments.collectLatest { moments ->
+            viewModel.moments.collect { moments ->
                 binding.textViewHyphaMoments.text =
                     if (moments.isEmpty()) {
                         "Nenhum momento nesta hypha ainda."
@@ -104,7 +95,7 @@ class HyphaDetailFragment : Fragment() {
             }
         }
 
-        viewModel.loadHypha(hyphaId)
+        viewModel.loadHypha(safeHyphaId)
     }
 
     override fun onDestroyView() {

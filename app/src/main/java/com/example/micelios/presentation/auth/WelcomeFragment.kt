@@ -10,25 +10,17 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.micelios.R
-import com.example.micelios.data.local.database.MiceliosDatabase
-import com.example.micelios.data.repository.UserRepository
 import com.example.micelios.databinding.FragmentWelcomeBinding
-import com.example.micelios.presentation.common.SessionManager
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class WelcomeFragment : Fragment() {
 
     private var _binding: FragmentWelcomeBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: WelcomeViewModel by viewModels {
-        WelcomeViewModelFactory(
-            userRepository = UserRepository(
-                MiceliosDatabase.getDatabase(requireContext()).userDao()
-            ),
-            sessionManager = SessionManager(requireContext().applicationContext)
-        )
-    }
+    private val viewModel: WelcomeViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,10 +35,21 @@ class WelcomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         observeUiState()
+        viewModel.checkExistingSession()
 
         binding.buttonEnterMicelios.setOnClickListener {
-            val name = binding.editTextWelcomeName.text.toString()
-            viewModel.registerLocalUser(name)
+            viewModel.register(
+                name = binding.editTextWelcomeName.text.toString(),
+                email = binding.editTextWelcomeEmail.text.toString(),
+                password = binding.editTextWelcomePassword.text.toString()
+            )
+        }
+
+        binding.buttonLogin.setOnClickListener {
+            viewModel.signIn(
+                email = binding.editTextWelcomeEmail.text.toString(),
+                password = binding.editTextWelcomePassword.text.toString()
+            )
         }
     }
 
@@ -54,16 +57,20 @@ class WelcomeFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collect { state ->
                 when (state) {
-                    is WelcomeUiState.Idle -> {
+                    WelcomeUiState.Idle -> {
                         binding.buttonEnterMicelios.isEnabled = true
+                        binding.buttonLogin.isEnabled = true
                     }
 
-                    is WelcomeUiState.Loading -> {
+                    WelcomeUiState.Loading -> {
                         binding.buttonEnterMicelios.isEnabled = false
+                        binding.buttonLogin.isEnabled = false
                     }
 
-                    is WelcomeUiState.Success -> {
+                    WelcomeUiState.Success -> {
                         binding.buttonEnterMicelios.isEnabled = true
+                        binding.buttonLogin.isEnabled = true
+
                         Toast.makeText(
                             requireContext(),
                             "Bem-vinda ao Micélios",
@@ -77,6 +84,8 @@ class WelcomeFragment : Fragment() {
 
                     is WelcomeUiState.Error -> {
                         binding.buttonEnterMicelios.isEnabled = true
+                        binding.buttonLogin.isEnabled = true
+
                         Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                         viewModel.resetState()
                     }

@@ -6,29 +6,29 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.micelios.data.local.database.MiceliosDatabase
-import com.example.micelios.data.repository.MessageRepository
 import com.example.micelios.databinding.FragmentChatBinding
-import com.example.micelios.presentation.common.SessionManager
-import kotlinx.coroutines.flow.collectLatest
+import com.google.firebase.auth.FirebaseAuth
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class ChatFragment : Fragment() {
 
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: ChatViewModel
+    private val viewModel: ChatViewModel by viewModels()
     private lateinit var chatAdapter: ChatAdapter
 
-    private var hyphaId: Long = -1L
+    private var hyphaId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        hyphaId = arguments?.getLong("hyphaId", -1L) ?: -1L
+        hyphaId = arguments?.getString("hyphaId")
     }
 
     override fun onCreateView(
@@ -43,19 +43,14 @@ class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (hyphaId == -1L) {
-            Toast.makeText(requireContext(), "Hypha inválida para o chat", Toast.LENGTH_SHORT)
-                .show()
+        val safeHyphaId = hyphaId
+        if (safeHyphaId.isNullOrBlank()) {
+            Toast.makeText(requireContext(), "Hypha inválida para o chat", Toast.LENGTH_SHORT).show()
             findNavController().popBackStack()
             return
         }
 
-        val database = MiceliosDatabase.getDatabase(requireContext())
-        val messageRepository = MessageRepository(database.messageDao())
-        val sessionManager = SessionManager(requireContext().applicationContext)
-        val currentUserId = sessionManager.getCurrentUserId()
-
-        viewModel = ChatViewModel(messageRepository)
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
         chatAdapter = ChatAdapter(currentUserId)
 
         binding.toolbar.setNavigationOnClickListener {
@@ -65,6 +60,9 @@ class ChatFragment : Fragment() {
         binding.recyclerMessages.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerMessages.adapter = chatAdapter
 
+        observeMessages()
+        observeUiState()
+
         binding.buttonSendMessage.setOnClickListener {
             val text = binding.editTextMessage.text.toString().trim()
 
@@ -73,27 +71,41 @@ class ChatFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            if (text.isBlank()) {
-                Toast.makeText(requireContext(), "Digite uma mensagem", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            viewModel.sendMessage(hyphaId, currentUserId, text)
+            viewModel.sendMessage(safeHyphaId, currentUserId, text)
             binding.editTextMessage.text?.clear()
         }
 
+        viewModel.loadMessages(safeHyphaId)
+    }
+
+    private fun observeMessages() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.messages.collectLatest { messages ->
+            viewModel.messages.collect { messages ->
                 chatAdapter.submitList(messages)
                 binding.textViewEmptyChat.visibility =
                     if (messages.isEmpty()) View.VISIBLE else View.GONE
+
                 if (messages.isNotEmpty()) {
                     binding.recyclerMessages.scrollToPosition(messages.lastIndex)
                 }
             }
         }
+    }
 
-        viewModel.loadMessages(hyphaId)
+    private fun observeUiState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.uiState.collect { state ->
+                when (state) {
+                    ChatUiState.Idle -> binding.buttonSendMessage.isEnabled = true
+                    ChatUiState.Sending -> binding.buttonSendMessage.isEnabled = false
+                    is ChatUiState.Error -> {
+                        binding.buttonSendMessage.isEnabled = true
+                        Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                        viewModel.resetUiState()
+                    }
+                }
+            }
+        }
     }
 
     override fun onDestroyView() {

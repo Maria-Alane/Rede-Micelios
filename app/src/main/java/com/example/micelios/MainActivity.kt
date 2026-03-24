@@ -6,15 +6,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import com.example.micelios.data.local.database.MiceliosDatabase
 import com.example.micelios.data.repository.UserRepository
 import com.example.micelios.databinding.ActivityMainBinding
-import com.example.micelios.presentation.common.SessionManager
+import com.google.firebase.auth.FirebaseAuth
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+
+    @Inject
+    lateinit var userRepository: UserRepository
 
     private val destinationsWithoutBottomNav = setOf(
         R.id.welcomeFragment,
@@ -29,18 +34,12 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val sessionManager = SessionManager(applicationContext)
-        sessionManager.startSession()
-
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
 
-        val userRepository =
-            UserRepository(MiceliosDatabase.getDatabase(applicationContext).userDao())
-
         lifecycleScope.launch {
-            val startDestination = resolveStartDestination(sessionManager, userRepository)
+            val startDestination = resolveStartDestination(FirebaseAuth.getInstance())
 
             val navGraph = navController.navInflater.inflate(R.navigation.nav_graph)
             navGraph.setStartDestination(startDestination)
@@ -50,31 +49,18 @@ class MainActivity : AppCompatActivity() {
 
             navController.addOnDestinationChangedListener { _, destination, _ ->
                 binding.bottomNavigation.visibility =
-                    if (destination.id in destinationsWithoutBottomNav) {
-                        View.GONE
-                    } else {
-                        View.VISIBLE
-                    }
+                    if (destination.id in destinationsWithoutBottomNav) View.GONE else View.VISIBLE
             }
         }
     }
 
-    private suspend fun resolveStartDestination(
-        sessionManager: SessionManager,
-        userRepository: UserRepository
-    ): Int {
-        val currentUserId = sessionManager.getCurrentUserId()
+    private suspend fun resolveStartDestination(auth: FirebaseAuth): Int {
+        val currentUserId = auth.currentUser?.uid ?: return R.id.welcomeFragment
 
-        if (currentUserId == null) {
-            return R.id.welcomeFragment
-        }
-
-        val userExists = userRepository.userExists(currentUserId)
-
-        return if (userExists) {
+        return if (userRepository.userExists(currentUserId)) {
             R.id.homeFragment
         } else {
-            sessionManager.clearSession()
+            auth.signOut()
             R.id.welcomeFragment
         }
     }

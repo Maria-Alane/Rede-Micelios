@@ -9,7 +9,7 @@ import com.example.micelios.domain.model.Message
 import com.example.micelios.presentation.common.TimeFormatter
 
 class ChatAdapter(
-    private val currentUserId: Long?
+    private val currentUserId: String?
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val items = mutableListOf<Message>()
@@ -21,8 +21,11 @@ class ChatAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        val message = items[position]
-        return if (message.senderUserId == currentUserId) VIEW_TYPE_OUTGOING else VIEW_TYPE_INCOMING
+        return if (items[position].senderUserId == currentUserId) {
+            VIEW_TYPE_OUTGOING
+        } else {
+            VIEW_TYPE_INCOMING
+        }
     }
 
     inner class IncomingViewHolder(

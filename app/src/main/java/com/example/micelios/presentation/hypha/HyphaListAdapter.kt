@@ -7,7 +7,7 @@ import com.example.micelios.databinding.ItemHyphaBinding
 import com.example.micelios.domain.model.Hypha
 
 class HyphaListAdapter(
-    private val onClick: (Long) -> Unit
+    private val onClick: (String) -> Unit
 ) : RecyclerView.Adapter<HyphaListAdapter.HyphaViewHolder>() {
 
     private val items = mutableListOf<Hypha>()
@@ -32,9 +32,7 @@ class HyphaListAdapter(
                     "${hypha.type.name} • ${hypha.description}"
                 }
 
-            binding.root.setOnClickListener {
-                onClick(hypha.id)
-            }
+            binding.root.setOnClickListener { onClick(hypha.id) }
         }
     }
 

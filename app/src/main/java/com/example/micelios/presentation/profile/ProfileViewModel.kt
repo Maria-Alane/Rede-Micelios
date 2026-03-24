@@ -2,22 +2,25 @@ package com.example.micelios.presentation.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.micelios.data.repository.AuthRepository
 import com.example.micelios.data.repository.HyphaRepository
 import com.example.micelios.data.repository.MomentRepository
 import com.example.micelios.data.repository.UserRepository
 import com.example.micelios.domain.model.FeedMoment
 import com.example.micelios.domain.model.Hypha
 import com.example.micelios.domain.model.User
-import com.example.micelios.presentation.common.SessionManager
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class ProfileViewModel(
+@HiltViewModel
+class ProfileViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val hyphaRepository: HyphaRepository,
     private val momentRepository: MomentRepository,
-    private val sessionManager: SessionManager
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _user = MutableStateFlow<User?>(null)
@@ -34,19 +37,15 @@ class ProfileViewModel(
     fun loadProfile() {
         if (hasLoaded) return
 
-        val currentUserId = sessionManager.getCurrentUserId() ?: return
+        val currentUserId = authRepository.getCurrentUserId() ?: return
         hasLoaded = true
 
         viewModelScope.launch {
-            userRepository.getUserById(currentUserId).collect { user ->
-                _user.value = user
-            }
+            userRepository.getUserById(currentUserId).collect { _user.value = it }
         }
 
         viewModelScope.launch {
-            hyphaRepository.getHyphasForUser(currentUserId).collect { hyphas ->
-                _hyphas.value = hyphas
-            }
+            hyphaRepository.getHyphasForUser(currentUserId).collect { _hyphas.value = it }
         }
 
         viewModelScope.launch {

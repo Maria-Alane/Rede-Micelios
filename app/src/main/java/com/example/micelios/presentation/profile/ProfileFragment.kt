@@ -6,36 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.example.micelios.data.local.database.MiceliosDatabase
-import com.example.micelios.data.repository.HyphaRepository
-import com.example.micelios.data.repository.MomentRepository
-import com.example.micelios.data.repository.UserRepository
 import com.example.micelios.databinding.FragmentProfileBinding
-import com.example.micelios.presentation.common.SessionManager
-import kotlinx.coroutines.flow.collectLatest
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class ProfileFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: ProfileViewModel by viewModels {
-        val database = MiceliosDatabase.getDatabase(requireContext())
-
-        ProfileViewModelFactory(
-            userRepository = UserRepository(database.userDao()),
-            hyphaRepository = HyphaRepository(database.hyphaDao()),
-            momentRepository = MomentRepository(
-                momentDao = database.momentDao(),
-                hyphaDao = database.hyphaDao()
-            ),
-            sessionManager = SessionManager(requireContext().applicationContext)
-        )
-    }
+    private val viewModel: ProfileViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,7 +32,7 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.user.collectLatest { user ->
+            viewModel.user.collect { user ->
                 if (user != null) {
                     binding.textViewProfileAvatar.text = user.name.take(2).uppercase()
                     binding.textViewUserName.text = user.name
@@ -65,7 +47,7 @@ class ProfileFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.hyphas.collectLatest { hyphas ->
+            viewModel.hyphas.collect { hyphas ->
                 binding.textViewUserHyphas.text =
                     if (hyphas.isEmpty()) {
                         "Você ainda não participa de nenhuma hypha."
@@ -76,7 +58,7 @@ class ProfileFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.moments.collectLatest { moments ->
+            viewModel.moments.collect { moments ->
                 binding.textViewUserMoments.text =
                     if (moments.isEmpty()) {
                         "Você ainda não publicou momentos recentes."
@@ -92,26 +74,5 @@ class ProfileFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-}
-
-class ProfileViewModelFactory(
-    private val userRepository: UserRepository,
-    private val hyphaRepository: HyphaRepository,
-    private val momentRepository: MomentRepository,
-    private val sessionManager: SessionManager
-) : ViewModelProvider.Factory {
-
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(ProfileViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return ProfileViewModel(
-                userRepository = userRepository,
-                hyphaRepository = hyphaRepository,
-                momentRepository = momentRepository,
-                sessionManager = sessionManager
-            ) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
