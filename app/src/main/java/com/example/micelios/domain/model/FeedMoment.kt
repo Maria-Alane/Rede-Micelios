@@ -1,10 +1,10 @@
 package com.example.micelios.domain.model
 
 data class FeedMoment(
-    val id: Long,
-    val hyphaId: Long,
+    val id: String,
+    val hyphaId: String,
     val hyphaName: String,
-    val creatorUserId: Long,
+    val creatorUserId: String,
     val creatorDisplayName: String,
     val creatorPhotoUri: String? = null,
     val content: String,

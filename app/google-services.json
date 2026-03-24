@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "567113391893",
+    "project_id": "micelios-rede",
+    "storage_bucket": "micelios-rede.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:567113391893:android:7523f33b732f8d1373d31c",
+        "android_client_info": {
+          "package_name": "com.example.micelios"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDksbMlO8wlkqfrkFoJ1ILNELwr9lXiseY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
